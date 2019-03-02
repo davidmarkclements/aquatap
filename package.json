@@ -1,0 +1,40 @@
+{
+  "name": "aquatap",
+  "version": "1.0.0",
+  "description": "fullstack TAP with a modern API",
+  "main": "index.js",
+  "bin": {
+    "tap": "./bin.js"
+  },
+  "browser": "./browser.js",
+  "keywords": [
+    "tap",
+    "test",
+    "test anything protocol"
+  ],
+  "author": "David Mark Clements <david.mark.clements@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "tap": "^12.5.3",
+    "tape": "^4.10.1",
+    "tmatch": "^5.0.0"
+  },
+  "devDependencies": {
+    "airtap": "^2.0.2"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "tap test/*.js",
+    "airtest": "airtap --local test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidmarkclements/aquatap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidmarkclements/aquatap/issues"
+  },
+  "homepage": "https://github.com/davidmarkclements/aquatap#readme"
+}
