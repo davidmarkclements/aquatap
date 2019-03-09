@@ -1,23 +1,33 @@
 'use strict'
 const tap = require('tap')
-
+const { captureStackTrace } = Error
 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor
+
+function w (fn) {
+  const stackFilter = (...args) => {
+    Error.captureStackTrace = (o) => captureStackTrace(o, stackFilter)
+    const result = fn(...args)
+    Error.captureStackTrace = captureStackTrace
+    return result
+  }
+  return stackFilter
+}
 
 function api (fn) {
   if (!(fn instanceof AsyncFunction)) {
     throw Error(`Aquatap API only accepts async functions`)
   }
   return (t) => {
-    const is = (actual, expected, message) => t.is(actual, expected, message)
-    const isNot = (actual, expected, message) => t.isNot(actual, expected, message)
-    const same = (actual, expected, message) => t.strictSame(actual, expected, message)
-    const different = (actual, expected, message) => t.strictNotSame(actual, expected, message)
-    const ok = (value, message) => t.ok(value, message)
-    const not = (value, message) => t.notOk(value, message)
-    const pass = (message) => t.pass(message)
-    const fail = (message) => t.fail(message)
+    const is = w((actual, expected, message) => t.is(actual, expected, message))
+    const isNot = w((actual, expected, message) => t.isNot(actual, expected, message))
+    const same = w((actual, expected, message) => t.strictSame(actual, expected, message))
+    const different = w((actual, expected, message) => t.strictNotSame(actual, expected, message))
+    const ok = w((value, message) => t.ok(value, message))
+    const not = w((value, message) => t.notOk(value, message))
+    const pass = w((message) => t.pass(message))
+    const fail = w((message) => t.fail(message))
 
-    const throws = (fn, error, message) => {
+    const throws = w((fn, error, message) => {
       if (fn instanceof AsyncFunction) {
         return fn().then(
           () => t.throws(() => {}, error, message),
@@ -25,8 +35,8 @@ function api (fn) {
         )
       }
       return t.throws(fn, error, message)
-    }
-    const doesNotThrow = (fn, message) => {
+    })
+    const doesNotThrow = w((fn, message) => {
       if (fn instanceof AsyncFunction) {
         return fn().then(
           () => t.doesNotThrow(() => {}, message),
@@ -34,12 +44,12 @@ function api (fn) {
         )
       }
       return t.doesNotThrow(fn, message)
-    }
+    })
 
-    is.loosely = (actual, expected, message) => t.same(actual, expected, message)
-    isNot.loosely = (actual, expected, message) => t.notSame(actual, expected, message)
-    same.loosely = (actual, expected, message) => t.same(actual, expected, message)
-    different.loosely = (actual, expected, message) => t.notSame(actual, expected, message)
+    is.loosely = w((actual, expected, message) => t.same(actual, expected, message))
+    isNot.loosely = w((actual, expected, message) => t.notSame(actual, expected, message))
+    same.loosely = w((actual, expected, message) => t.same(actual, expected, message))
+    different.loosely = w((actual, expected, message) => t.notSame(actual, expected, message))
 
     const { plan, timeout, comment } = t
 
