@@ -1,6 +1,6 @@
 {
   "name": "aquatap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "fullstack TAP with a modern API",
   "main": "index.js",
   "bin": {
